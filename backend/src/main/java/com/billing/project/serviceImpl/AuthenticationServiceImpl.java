@@ -6,9 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.billing.project.custom_exception.ApiException;
 import com.billing.project.custom_exception.AuthenticationException;
+import com.billing.project.dto.ApiResponse;
 import com.billing.project.dto.AuthenticationRequest;
 import com.billing.project.dto.RegisterRequest;
+import com.billing.project.dto.RegisterResponse;
 import com.billing.project.dto.UserResp;
+import com.billing.project.entities.Role;
 import com.billing.project.entities.User;
 import com.billing.project.repos.UserRepository;
 import com.billing.project.services.AuthenticationService;
@@ -25,24 +28,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final ModelMapper modelMapper;
 
     @Override
-    public UserResp register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
        if(userRepository.existsByEmail(request.getEmail())) {
     	   throw new ApiException("duplicate email detected !!!");
        }
        
        User userEntity = modelMapper.map(request, User.class);
-       
+       userEntity.setRole(Role.USER);
+       userRepository.save(userEntity);
        
 //        passwordEncoder.encode(request.getPassword())
-        return modelMapper.map(userRepository.save(userEntity), UserResp.class);
+        return new RegisterResponse("User registered successfully...");
     }
 
 	@Override
-	public UserResp authenticate(AuthenticationRequest request) {
+	public RegisterResponse authenticate(AuthenticationRequest request) {
 		// TODO Auto-generated method stub
 		User entity = userRepository.findByEmailAndPassword(request.getEmail(), request.getPassword())
 				.orElseThrow(()-> new AuthenticationException("Invalid email or password"));
-		return modelMapper.map(entity, UserResp.class);
+		
+		return new RegisterResponse("User logged in successfully...");
 	}
 
 //    @Override
