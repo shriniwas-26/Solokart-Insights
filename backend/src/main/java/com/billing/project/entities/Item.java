@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -34,9 +37,11 @@ public class Item {
     @Column(name = "image_url")
     private String imageUrl;
     
+    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
