@@ -17,15 +17,16 @@ import com.billing.project.dto.OrderRequest;
 import com.billing.project.dto.OrderStatusDto;
 import com.billing.project.services.OrderService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/orders")
+@RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
 
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
+    
 
     @GetMapping
     public ResponseEntity<?> getAllOrders() {
