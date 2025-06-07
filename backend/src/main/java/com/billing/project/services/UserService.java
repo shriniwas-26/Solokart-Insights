@@ -11,7 +11,7 @@ import com.billing.project.entities.User;
 public interface UserService {
     List<UserResp> getAllUsers();
     UserResp getUserById(Long id);
-    RegisterResponse createUser(RegisterRequest userDto);
+    UserResp createUser(RegisterRequest userDto);
     ApiResponse updateUser(Long id, RegisterRequest user);
     ApiResponse deleteUser(Long id);
 

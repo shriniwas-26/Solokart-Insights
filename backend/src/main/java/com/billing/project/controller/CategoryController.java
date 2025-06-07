@@ -1,5 +1,6 @@
 package com.billing.project.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,7 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody CategoryRequest category) {
-        return ResponseEntity.ok(categoryService.createCategory(category));
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(category));
     }
 
     @PutMapping("/{id}")
