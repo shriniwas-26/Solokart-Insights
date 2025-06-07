@@ -1,5 +1,6 @@
 package com.billing.project.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,11 +20,11 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(
-            @RequestBody RegisterRequest request
-    ) {
-        return ResponseEntity.ok(authenticationService.register(request));
+    @PostMapping("/admin/register")
+    public ResponseEntity<?> registerAdmin(
+    			@RequestBody RegisterRequest registerDto
+    		){
+    	return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerAdmin(registerDto)); 
     }
 
     @PostMapping("/authenticate")

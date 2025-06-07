@@ -27,19 +27,19 @@ public class ItemServiceImpl implements ItemService {
     private final ModelMapper modelMapper;
 
     @Override
-    public ApiResponse createItem(ItemRequest itemDto) {
+    public Item createItem(ItemRequest itemDto) {
     	Item item = modelMapper.map(itemDto, Item.class);
         Category category = categoryRepository.findById(itemDto.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + itemDto.getCategoryId()));
         
         
         item.setCategory(category);
-        itemRepository.save(item);
-        return new ApiResponse("Item created successfully..."); 
+        Item savedItem = itemRepository.save(item);
+        return savedItem; 
     }
 
     @Override
-    public ApiResponse updateItem(Long id, ItemRequest itemDetails) {
+    public Item updateItem(Long id, ItemRequest itemDetails) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
         
@@ -52,8 +52,8 @@ public class ItemServiceImpl implements ItemService {
         item.setDescription(itemDetails.getDescription());
         item.setImageUrl(itemDetails.getImageUrl());
         
-        itemRepository.save(item);
-        return new ApiResponse("Item updated successfully....");
+        Item savedItem = itemRepository.save(item);
+        return savedItem;
     }
 
     @Override

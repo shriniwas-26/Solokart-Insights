@@ -8,6 +8,7 @@ import com.billing.project.dto.RegisterResponse;
 import com.billing.project.dto.UserResp;
 
 public interface AuthenticationService {
-	RegisterResponse register(RegisterRequest request);
 	RegisterResponse authenticate(AuthenticationRequest request);
+
+	UserResp registerAdmin(RegisterRequest registerDto);
 }

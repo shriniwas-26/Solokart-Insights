@@ -13,6 +13,6 @@ public interface ItemService {
     Item getItemById(Long id);
     List<Item> getItemsByCategory(Long categoryId);
     List<Item> searchItems(String query);
-	ApiResponse createItem(ItemRequest item);
-	ApiResponse updateItem(Long id, ItemRequest itemDetails);
+	Item createItem(ItemRequest item);
+	Item updateItem(Long id, ItemRequest itemDetails);
 }
