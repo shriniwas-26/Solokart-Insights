@@ -45,7 +45,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderDto) {
-        return ResponseEntity.ok(orderService.create(orderDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.create(orderDto));
     }
 
     @PatchMapping("/{id}")

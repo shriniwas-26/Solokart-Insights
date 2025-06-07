@@ -12,8 +12,12 @@ import lombok.Setter;
 public class RegisterResponse {
 	private LocalDateTime timeStamp;
 	private String message;
-	public RegisterResponse(String message) {
+	private String jwt;
+	private UserResp user;
+	public RegisterResponse(String message, String jwt, UserResp user) {
 		this.message = message;
+		this.jwt = jwt;
+		this.user = user;
 		this.timeStamp=LocalDateTime.now();
 	}
 }

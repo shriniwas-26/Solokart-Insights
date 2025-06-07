@@ -1,11 +1,17 @@
 package com.billing.project.serviceImpl;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.billing.project.config.JwtUtils;
 import com.billing.project.custom_exception.ApiException;
 import com.billing.project.custom_exception.AuthenticationException;
+import com.billing.project.custom_exception.ResourceNotFoundException;
 import com.billing.project.dto.ApiResponse;
 import com.billing.project.dto.AuthenticationRequest;
 import com.billing.project.dto.RegisterRequest;
@@ -23,31 +29,48 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
-   
-//    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder encoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
     private final ModelMapper modelMapper;
-
-    @Override
-    public RegisterResponse register(RegisterRequest request) {
-       if(userRepository.existsByEmail(request.getEmail())) {
-    	   throw new ApiException("duplicate email detected !!!");
-       }
-       
-       User userEntity = modelMapper.map(request, User.class);
-       userEntity.setRole(Role.USER);
-       userRepository.save(userEntity);
-       
-//        passwordEncoder.encode(request.getPassword())
-        return new RegisterResponse("User registered successfully...");
-    }
+   
 
 	@Override
 	public RegisterResponse authenticate(AuthenticationRequest request) {
 		// TODO Auto-generated method stub
-		User entity = userRepository.findByEmailAndPassword(request.getEmail(), request.getPassword())
-				.orElseThrow(()-> new AuthenticationException("Invalid email or password"));
+
+		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getEmail(),
+	    		   request.getPassword());
+			System.out.println("is authenticated " + authToken.isAuthenticated());// f
+			// 2. invoke AuthenticationManager's - authenticate method - spring sec supplied
+			Authentication successfulAuth = authenticationManager.authenticate(authToken);
+			// in case of failure - throws AuthenticationException
+			// in case of success- rets user details object - within auth
+			// 3. => success
+			System.out.println("is authenticated " + successfulAuth.isAuthenticated());// true
+			System.out.println("principal " + successfulAuth.getPrincipal());// user details + granted authorities
+			System.out.println("principal class" + successfulAuth.getPrincipal().getClass());// 
+			
+			User user = userRepository.findByEmail(request.getEmail())
+					.orElseThrow(()-> new ResourceNotFoundException("User not found with given email id...."));
 		
-		return new RegisterResponse("User logged in successfully...");
+		return new RegisterResponse("User logged in successfully...", jwtUtils.generateJwtToken(successfulAuth), modelMapper.map(user, UserResp.class));
+	}
+
+
+	@Override
+	public UserResp registerAdmin(RegisterRequest registerDto) {
+		// TODO Auto-generated method stub
+		if(userRepository.existsByEmail(registerDto.getEmail())) {
+	    	   throw new ApiException("duplicate email detected !!!");
+	       }
+		
+		
+		User user = modelMapper.map(registerDto, User.class);
+		user.setPassword(encoder.encode(user.getPassword()));
+		user.setRole(Role.ROLE_ADMIN);
+		
+		return modelMapper.map(userRepository.save(user), UserResp.class);
 	}
 
 //    @Override
